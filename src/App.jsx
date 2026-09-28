@@ -1,5 +1,11 @@
+import { Button } from '@/components/ui/button.jsx';
+
 const App = () => {
-  return ( <h1 className="bg-amber-600" >hello world</h1> );
-}
- 
+  return (
+    <div className="p-10">
+      <Button>Teste shadcn</Button>
+    </div>
+  );
+};
+
 export default App;
