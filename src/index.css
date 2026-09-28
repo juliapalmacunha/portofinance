@@ -1,176 +1,201 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
+/* ========================================
+   FONTS
+======================================== */
+
 @font-face {
-  font-family: "Nunito";
-  src: url("./assets/fonts/Nunito-ExtraLight.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-ExtraLight.ttf') format('truetype');
   font-weight: 200;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Nunito";
-  src: url("./assets/fonts/Nunito-ExtraLightItalic.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-ExtraLightItalic.ttf') format('truetype');
   font-weight: 200;
   font-style: italic;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Nunito";
-  src: url("./assets/fonts/Nunito-Light.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-Light.ttf') format('truetype');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Nunito";
-  src: url("./assets/fonts/Nunito-LightItalic.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-LightItalic.ttf') format('truetype');
   font-weight: 300;
   font-style: italic;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Nunito";
-  src: url("./assets/fonts/Nunito-Regular.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Nunito";
-  src: url("./assets/fonts/Nunito-Italic.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-Italic.ttf') format('truetype');
   font-weight: 400;
   font-style: italic;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Nunito";
-  src: url("./assets/fonts/Nunito-Medium.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Nunito";
-  src: url("./assets/fonts/Nunito-MediumItalic.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-MediumItalic.ttf') format('truetype');
   font-weight: 500;
   font-style: italic;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Nunito";
-  src: url("./assets/fonts/Nunito-SemiBold.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-SemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Nunito";
-  src: url("./assets/fonts/Nunito-SemiBoldItalic.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-SemiBoldItalic.ttf') format('truetype');
   font-weight: 600;
   font-style: italic;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Nunito";
-  src: url("./assets/fonts/Nunito-Bold.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Nunito";
-  src: url("./assets/fonts/Nunito-BoldItalic.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-BoldItalic.ttf') format('truetype');
   font-weight: 700;
   font-style: italic;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Nunito";
-  src: url("./assets/fonts/Nunito-ExtraBold.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-ExtraBold.ttf') format('truetype');
   font-weight: 800;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Nunito";
-  src: url("./assets/fonts/Nunito-ExtraBoldItalic.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-ExtraBoldItalic.ttf') format('truetype');
   font-weight: 800;
   font-style: italic;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Nunito";
-  src: url("./assets/fonts/Nunito-Black.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-Black.ttf') format('truetype');
   font-weight: 900;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Nunito";
-  src: url("./assets/fonts/Nunito-BlackItalic.ttf") format("truetype");
+  font-family: 'Nunito';
+  src: url('./assets/fonts/Nunito-BlackItalic.ttf') format('truetype');
   font-weight: 900;
   font-style: italic;
   font-display: swap;
 }
 
-* {
-  font-family: "Nunito", "sans-serif";
-}
+/* ========================================
+   TAILWIND / SHADCN TOKENS
+======================================== */
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: 'Geist Variable', sans-serif;
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --color-foreground: var(--foreground);
+  --font-sans: 'Nunito', sans-serif;
+  --font-heading: 'Nunito', sans-serif;
+
   --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -180,83 +205,175 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ========================================
+   PORTO — LIGHT THEME
+======================================== */
+
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Base */
+  --background: #eaf0ee;
+  --foreground: #33413f;
+
+  /* Surfaces */
+  --card: #f8faf9;
+  --card-foreground: #33413f;
+
+  --popover: #f8faf9;
+  --popover-foreground: #33413f;
+
+  /* Brand / main action */
+  --primary: #5b6b68;
+  --primary-foreground: #ffffff;
+
+  /* Soft supporting colors */
+  --secondary: #d1e1de;
+  --secondary-foreground: #3b4947;
+
+  --accent: #b4d1cf;
+  --accent-foreground: #33413f;
+
+  /* Muted / neutral */
+  --muted: #d3cbc9;
+  --muted-foreground: #716966;
+
+  /* Semantic financial colors */
+  --success: #2f9e5b;
+  --success-foreground: #ffffff;
+
+  --destructive: #d95353;
+  --destructive-foreground: #ffffff;
+
+  --warning: #d4a447;
+  --warning-foreground: #3b3528;
+
+  --info: #6f9fa2;
+  --info-foreground: #ffffff;
+
+  /* Controls */
+  --border: #d6dfdc;
+  --input: #d6dfdc;
+  --ring: #8aa9a6;
+
+  /* Charts */
+  --chart-1: #2f9e5b; /* ganho */
+  --chart-2: #d95353; /* gasto */
+  --chart-3: #7ba9a7; /* investimento */
+  --chart-4: #edc4be; /* categoria auxiliar */
+  --chart-5: #8c9794; /* categoria auxiliar */
+
+  /* Shape */
+  --radius: 0.9rem;
+
+  /* Sidebar */
+  --sidebar: #f8faf9;
+  --sidebar-foreground: #33413f;
+
+  --sidebar-primary: #5b6b68;
+  --sidebar-primary-foreground: #ffffff;
+
+  --sidebar-accent: #d1e1de;
+  --sidebar-accent-foreground: #33413f;
+
+  --sidebar-border: #d6dfdc;
+  --sidebar-ring: #8aa9a6;
 }
 
+/* ========================================
+   PORTO — DARK THEME
+======================================== */
+
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Base */
+  --background: #202826;
+  --foreground: #eef3f1;
+
+  /* Surfaces */
+  --card: #2b3532;
+  --card-foreground: #eef3f1;
+
+  --popover: #2b3532;
+  --popover-foreground: #eef3f1;
+
+  /* Brand */
+  --primary: #b4d1cf;
+  --primary-foreground: #26302e;
+
+  /* Secondary */
+  --secondary: #394744;
+  --secondary-foreground: #eaf0ee;
+
+  /* Accent */
+  --accent: #465956;
+  --accent-foreground: #eaf0ee;
+
+  /* Muted */
+  --muted: #343f3c;
+  --muted-foreground: #abb7b3;
+
+  /* Semantic financial colors */
+  --success: #4acb78;
+  --success-foreground: #102518;
+
+  --destructive: #ff6b6b;
+  --destructive-foreground: #2d1111;
+
+  --warning: #e8bc63;
+  --warning-foreground: #2f2716;
+
+  --info: #9ac5c7;
+  --info-foreground: #1f2927;
+
+  /* Controls */
+  --border: #46524f;
+  --input: #46524f;
+  --ring: #9bbab7;
+
+  /* Charts */
+  --chart-1: #4acb78;
+  --chart-2: #ff6b6b;
+  --chart-3: #8fbebb;
+  --chart-4: #edc4be;
+  --chart-5: #c9d3d0;
+
+  /* Sidebar */
+  --sidebar: #26302e;
+  --sidebar-foreground: #eef3f1;
+
+  --sidebar-primary: #b4d1cf;
+  --sidebar-primary-foreground: #26302e;
+
+  --sidebar-accent: #394744;
+  --sidebar-accent-foreground: #eaf0ee;
+
+  --sidebar-border: #46524f;
+  --sidebar-ring: #9bbab7;
 }
+
+/* ========================================
+   BASE
+======================================== */
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
+
   html {
     @apply font-sans;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
   }
 }
