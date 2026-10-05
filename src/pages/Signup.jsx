@@ -1,7 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { ShieldCheck } from 'lucide-react';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import PasswordInput from '@/components/password-input.jsx';
@@ -22,13 +25,20 @@ import {
   FieldLabel,
 } from '@/components/ui/field.jsx';
 import { Input } from '@/components/ui/input.jsx';
+import { api } from '@/lib/axios.js';
 
 const signupSchema = z.object({
-  name: z
+  first_name: z
     .string()
     .trim()
     .min(1, 'O nome é obrigatório')
-    .min(3, 'O nome deve ter pelo menos 3 caracteres'),
+    .min(2, 'O nome deve ter pelo menos 2 caracteres'),
+
+  last_name: z
+    .string()
+    .trim()
+    .min(1, 'O sobrenome é obrigatório')
+    .min(2, 'O sobrenome deve ter pelo menos 2 caracteres'),
 
   email: z.email('E-mail inválido'),
 
@@ -40,16 +50,28 @@ const signupSchema = z.object({
 });
 
 const SignupPage = () => {
+  const [user, setUser] = useState(null);
+  const signupMutation = useMutation({
+    mutationKey: ['signup'],
+
+    mutationFn: async (data) => {
+      const response = await api.post('/users', data);
+
+      return response.data;
+    },
+  });
+
   const {
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     resolver: zodResolver(signupSchema),
 
     defaultValues: {
-      name: '',
+      first_name: '',
+      last_name: '',
       email: '',
       password: '',
       acceptedTerms: false,
@@ -58,11 +80,43 @@ const SignupPage = () => {
     mode: 'onTouched',
   });
 
-  const onSubmit = async (data) => {
-    console.log(data);
+  const onSubmit = (formData) => {
+    const data = { ...formData };
 
-    // TODO: chamar a API de cadastro
+    delete data.acceptedTerms;
+
+    signupMutation.mutate(data, {
+      onSuccess: (responseData) => {
+        const accessToken = responseData.tokens?.accessToken;
+        const refreshToken = responseData.tokens?.refreshToken;
+
+        setUser(responseData);
+
+        if (accessToken && refreshToken) {
+          localStorage.setItem('access_token', accessToken);
+          localStorage.setItem('refresh_token', refreshToken);
+        }
+
+        toast.success('Conta criada com sucesso!');
+      },
+
+      onError: (error) => {
+        const message =
+          error.response?.data?.message || 'Erro ao criar a conta';
+
+        toast.error(message);
+      },
+    });
   };
+
+  if (user) {
+    return (
+      <p>
+        Bem-vindo, {user.first_name} {user.last_name}! Sua conta foi criada com
+        sucesso.
+      </p>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(ellipse_at_top,hsl(var(--palette-3)/0.45),transparent_60%)] px-4 py-5">
@@ -87,20 +141,41 @@ const SignupPage = () => {
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <CardContent className="mb-5 px-8">
             <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="name">Nome completo</FieldLabel>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field>
+                  <FieldLabel htmlFor="first_name">Nome</FieldLabel>
 
-                <Input
-                  id="name"
-                  autoComplete="name"
-                  placeholder="Como aparece no seu documento"
-                  aria-invalid={!!errors.name}
-                  className="bg-background/60 h-11"
-                  {...register('name')}
-                />
+                  <Input
+                    id="first_name"
+                    autoComplete="given-name"
+                    placeholder="João"
+                    aria-invalid={!!errors.first_name}
+                    className="bg-background/60 h-11"
+                    {...register('first_name')}
+                  />
 
-                {errors.name && <FieldError errors={[errors.name]} />}
-              </Field>
+                  {errors.first_name && (
+                    <FieldError errors={[errors.first_name]} />
+                  )}
+                </Field>
+
+                <Field>
+                  <FieldLabel htmlFor="last_name">Sobrenome</FieldLabel>
+
+                  <Input
+                    id="last_name"
+                    autoComplete="family-name"
+                    placeholder="Silva"
+                    aria-invalid={!!errors.last_name}
+                    className="bg-background/60 h-11"
+                    {...register('last_name')}
+                  />
+
+                  {errors.last_name && (
+                    <FieldError errors={[errors.last_name]} />
+                  )}
+                </Field>
+              </div>
 
               <Field>
                 <FieldLabel htmlFor="email">E-mail</FieldLabel>
@@ -155,7 +230,6 @@ const SignupPage = () => {
                         >
                           Li e concordo com os{' '}
                         </FieldLabel>
-                        {/* links provisorios */}
                         <Link
                           to="/termos"
                           target="_blank"
@@ -165,7 +239,6 @@ const SignupPage = () => {
                           Termos de uso
                         </Link>
                         {' e a '}
-                        {/* links provisorios */}
                         <Link
                           to="/privacidade"
                           target="_blank"
@@ -190,23 +263,21 @@ const SignupPage = () => {
           <CardFooter className="flex-col gap-4 px-8 pt-6">
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={signupMutation.isPending}
               className="h-11 w-full bg-[hsl(var(--palette-6))] text-base font-semibold hover:bg-[hsl(var(--palette-7))]"
             >
-              {isSubmitting ? 'Criando conta...' : 'Criar conta'}
+              {signupMutation.isPending ? 'Criando conta...' : 'Criar conta'}
             </Button>
 
             <div className="text-muted-foreground flex items-center text-sm">
               <span>Já tem conta?</span>
 
-              <Button variant="link" asChild>
-                <Link
-                  to="/login"
-                  className="text-primary font-semibold underline-offset-4 hover:underline"
-                >
-                  Entrar
-                </Link>
-              </Button>
+              <Link
+                to="/login"
+                className="text-primary ml-1.5 font-semibold underline-offset-4 hover:underline"
+              >
+                Entrar
+              </Link>
             </div>
           </CardFooter>
         </form>
