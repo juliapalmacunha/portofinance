@@ -1,7 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { ShieldCheck } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import PasswordInput from '@/components/password-input.jsx';
@@ -21,6 +24,7 @@ import {
   FieldLabel,
 } from '@/components/ui/field.jsx';
 import { Input } from '@/components/ui/input.jsx';
+import { api } from '@/lib/axios.js';
 
 const loginSchema = z.object({
   email: z.email('E-mail inválido'),
@@ -29,10 +33,22 @@ const loginSchema = z.object({
 });
 
 const LoginPage = () => {
+  const [user, setUser] = useState(null);
+
+  const loginMutation = useMutation({
+    mutationKey: ['login'],
+
+    mutationFn: async (data) => {
+      const response = await api.post('/users/auth/login', data);
+
+      return response.data;
+    },
+  });
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     resolver: zodResolver(loginSchema),
 
@@ -44,11 +60,63 @@ const LoginPage = () => {
     mode: 'onTouched',
   });
 
-  const onSubmit = async (data) => {
-    console.log(data);
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const accessToken = localStorage.getItem('access_token');
+        const refreshToken = localStorage.getItem('refresh_token');
 
-    // TODO: chamar a API de login
+        if (!accessToken || !refreshToken) {
+          return;
+        }
+
+        const response = await api.get('/users/me', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        setUser(response.data);
+      } catch (error) {
+        console.error('Erro ao verificar tokens:', error);
+      }
+    };
+
+    init();
+  }, []);
+
+  const onSubmit = (data) => {
+    loginMutation.mutate(data, {
+      onSuccess: (responseData) => {
+        const accessToken = responseData.tokens?.accessToken;
+        const refreshToken = responseData.tokens?.refreshToken;
+
+        if (accessToken && refreshToken) {
+          localStorage.setItem('access_token', accessToken);
+          localStorage.setItem('refresh_token', refreshToken);
+        }
+
+        setUser(responseData);
+
+        toast.success('Login realizado com sucesso!');
+      },
+
+      onError: (error) => {
+        const message =
+          error.response?.data?.message || 'E-mail ou senha inválidos';
+
+        toast.error(message);
+      },
+    });
   };
+
+  if (user) {
+    return (
+      <p>
+        Bem-vindo de volta, {user.first_name} {user.last_name}!
+      </p>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(ellipse_at_top,hsl(var(--palette-3)/0.45),transparent_60%)] px-4 py-10">
@@ -124,23 +192,21 @@ const LoginPage = () => {
           <CardFooter className="flex-col gap-4 px-8 pt-6">
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={loginMutation.isPending}
               className="h-11 w-full bg-[hsl(var(--palette-6))] text-base font-semibold hover:bg-[hsl(var(--palette-7))]"
             >
-              {isSubmitting ? 'Entrando...' : 'Entrar'}
+              {loginMutation.isPending ? 'Entrando...' : 'Entrar'}
             </Button>
 
             <div className="text-muted-foreground flex items-center text-sm">
               <span>Ainda não tem conta?</span>
 
-              <Button variant="link" asChild>
-                <Link
-                  to="/signup"
-                  className="text-primary font-semibold underline-offset-4 hover:underline"
-                >
-                  Criar conta
-                </Link>
-              </Button>
+              <Link
+                to="/signup"
+                className="text-primary ml-1.5 font-semibold underline-offset-4 hover:underline"
+              >
+                Criar conta
+              </Link>
             </div>
           </CardFooter>
         </form>
