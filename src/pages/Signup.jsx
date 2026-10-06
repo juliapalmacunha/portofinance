@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { ShieldCheck } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
@@ -87,6 +87,31 @@ const SignupPage = () => {
 
     mode: 'onTouched',
   });
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const accessToken = localStorage.getItem('access_token');
+        const refreshToken = localStorage.getItem('refresh_token');
+
+        if (!accessToken || !refreshToken) {
+          return;
+        }
+
+        const response = await api.get('/users/me', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        setUser(response.data);
+      } catch (error) {
+        console.error('Erro ao verificar tokens:', error);
+      }
+    };
+
+    init();
+  }, []);
 
   const onSubmit = (formData) => {
     const data = { ...formData };
