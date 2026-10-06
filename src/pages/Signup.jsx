@@ -27,27 +27,34 @@ import {
 import { Input } from '@/components/ui/input.jsx';
 import { api } from '@/lib/axios.js';
 
-const signupSchema = z.object({
-  first_name: z
-    .string()
-    .trim()
-    .min(1, 'O nome é obrigatório')
-    .min(2, 'O nome deve ter pelo menos 2 caracteres'),
+const signupSchema = z
+  .object({
+    first_name: z
+      .string()
+      .trim()
+      .min(1, 'O nome é obrigatório')
+      .min(2, 'O nome deve ter pelo menos 2 caracteres'),
 
-  last_name: z
-    .string()
-    .trim()
-    .min(1, 'O sobrenome é obrigatório')
-    .min(2, 'O sobrenome deve ter pelo menos 2 caracteres'),
+    last_name: z
+      .string()
+      .trim()
+      .min(1, 'O sobrenome é obrigatório')
+      .min(2, 'O sobrenome deve ter pelo menos 2 caracteres'),
 
-  email: z.email('E-mail inválido'),
+    email: z.email('E-mail inválido'),
 
-  password: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres'),
+    password: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres'),
 
-  acceptedTerms: z.literal(true, {
-    error: 'Você precisa aceitar os termos de uso',
-  }),
-});
+    confirmPassword: z.string().min(1, 'A confirmação de senha é obrigatória'),
+
+    acceptedTerms: z.literal(true, {
+      error: 'Você precisa aceitar os termos de uso',
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'As senhas não coincidem',
+    path: ['confirmPassword'],
+  });
 
 const SignupPage = () => {
   const [user, setUser] = useState(null);
@@ -74,6 +81,7 @@ const SignupPage = () => {
       last_name: '',
       email: '',
       password: '',
+      confirmPassword: '',
       acceptedTerms: false,
     },
 
@@ -84,6 +92,7 @@ const SignupPage = () => {
     const data = { ...formData };
 
     delete data.acceptedTerms;
+    delete data.confirmPassword;
 
     signupMutation.mutate(data, {
       onSuccess: (responseData) => {
@@ -120,10 +129,10 @@ const SignupPage = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(ellipse_at_top,hsl(var(--palette-3)/0.45),transparent_60%)] px-4 py-5">
-      <Card className="border-border bg-card w-full max-w-md gap-6 py-8 shadow-2xl shadow-black/40">
+      <Card className="border-border bg-card w-full max-w-lg gap-4 py-6 shadow-2xl shadow-black/40">
         <CardHeader className="gap-2 px-8">
           <div
-            className="bg-primary/15 text-primary mb-2 flex size-10 items-center justify-center rounded-lg"
+            className="bg-primary/15 text-primary mb-1 flex size-10 items-center justify-center rounded-lg"
             aria-hidden="true"
           >
             <ShieldCheck className="size-5" />
@@ -139,7 +148,7 @@ const SignupPage = () => {
         </CardHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <CardContent className="mb-5 px-8">
+          <CardContent className="mb-2 px-8">
             <FieldGroup>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Field>
@@ -193,19 +202,39 @@ const SignupPage = () => {
                 {errors.email && <FieldError errors={[errors.email]} />}
               </Field>
 
-              <Field>
-                <FieldLabel htmlFor="password">Senha</FieldLabel>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field>
+                  <FieldLabel htmlFor="password">Senha</FieldLabel>
 
-                <PasswordInput
-                  id="password"
-                  autoComplete="new-password"
-                  placeholder="Mínimo de 8 caracteres"
-                  aria-invalid={!!errors.password}
-                  {...register('password')}
-                />
+                  <PasswordInput
+                    id="password"
+                    autoComplete="new-password"
+                    placeholder="Mínimo de 8"
+                    aria-invalid={!!errors.password}
+                    {...register('password')}
+                  />
 
-                {errors.password && <FieldError errors={[errors.password]} />}
-              </Field>
+                  {errors.password && <FieldError errors={[errors.password]} />}
+                </Field>
+
+                <Field>
+                  <FieldLabel htmlFor="confirmPassword">
+                    Confirmar senha
+                  </FieldLabel>
+
+                  <PasswordInput
+                    id="confirmPassword"
+                    autoComplete="new-password"
+                    placeholder="Repita a senha"
+                    aria-invalid={!!errors.confirmPassword}
+                    {...register('confirmPassword')}
+                  />
+
+                  {errors.confirmPassword && (
+                    <FieldError errors={[errors.confirmPassword]} />
+                  )}
+                </Field>
+              </div>
 
               <Controller
                 name="acceptedTerms"
@@ -260,7 +289,7 @@ const SignupPage = () => {
             </FieldGroup>
           </CardContent>
 
-          <CardFooter className="flex-col gap-4 px-8 pt-6">
+          <CardFooter className="flex-col gap-3 px-8 pt-2">
             <Button
               type="submit"
               disabled={signupMutation.isPending}
