@@ -1,10 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
 import { ShieldCheck } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router';
-import { toast } from 'sonner';
 import { z } from 'zod';
 
 import PasswordInput from '@/components/password-input.jsx';
@@ -25,7 +23,7 @@ import {
   FieldLabel,
 } from '@/components/ui/field.jsx';
 import { Input } from '@/components/ui/input.jsx';
-import { api } from '@/lib/axios.js';
+import { AuthContext } from '@/context/auth.jsx';
 
 const signupSchema = z
   .object({
@@ -57,16 +55,7 @@ const signupSchema = z
   });
 
 const SignupPage = () => {
-  const [user, setUser] = useState(null);
-  const signupMutation = useMutation({
-    mutationKey: ['signup'],
-
-    mutationFn: async (data) => {
-      const response = await api.post('/users', data);
-
-      return response.data;
-    },
-  });
+  const { user, signup, isSigningUp } = useContext(AuthContext);
 
   const {
     register,
@@ -88,59 +77,13 @@ const SignupPage = () => {
     mode: 'onTouched',
   });
 
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const accessToken = localStorage.getItem('access_token');
-        const refreshToken = localStorage.getItem('refresh_token');
-
-        if (!accessToken || !refreshToken) {
-          return;
-        }
-
-        const response = await api.get('/users/me', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-
-        setUser(response.data);
-      } catch (error) {
-        console.error('Erro ao verificar tokens:', error);
-      }
-    };
-
-    init();
-  }, []);
-
   const onSubmit = (formData) => {
     const data = { ...formData };
 
     delete data.acceptedTerms;
     delete data.confirmPassword;
 
-    signupMutation.mutate(data, {
-      onSuccess: (responseData) => {
-        const accessToken = responseData.tokens?.accessToken;
-        const refreshToken = responseData.tokens?.refreshToken;
-
-        setUser(responseData);
-
-        if (accessToken && refreshToken) {
-          localStorage.setItem('access_token', accessToken);
-          localStorage.setItem('refresh_token', refreshToken);
-        }
-
-        toast.success('Conta criada com sucesso!');
-      },
-
-      onError: (error) => {
-        const message =
-          error.response?.data?.message || 'Erro ao criar a conta';
-
-        toast.error(message);
-      },
-    });
+    signup(data);
   };
 
   if (user) {
@@ -173,7 +116,7 @@ const SignupPage = () => {
         </CardHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <CardContent className="mb-2 px-8">
+          <CardContent className="mb-5 px-8">
             <FieldGroup>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Field>
@@ -264,6 +207,7 @@ const SignupPage = () => {
               <Controller
                 name="acceptedTerms"
                 control={control}
+
                 render={({ field, fieldState }) => (
                   <Field>
                     <div className="flex items-start gap-3">
@@ -317,10 +261,10 @@ const SignupPage = () => {
           <CardFooter className="flex-col gap-3 px-8 pt-2">
             <Button
               type="submit"
-              disabled={signupMutation.isPending}
+              disabled={isSigningUp}
               className="h-11 w-full bg-[hsl(var(--palette-6))] text-base font-semibold hover:bg-[hsl(var(--palette-7))]"
             >
-              {signupMutation.isPending ? 'Criando conta...' : 'Criar conta'}
+              {isSigningUp ? 'Criando conta...' : 'Criar conta'}
             </Button>
 
             <div className="text-muted-foreground flex items-center text-sm">
