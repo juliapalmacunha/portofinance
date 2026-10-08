@@ -31,7 +31,7 @@ const loginSchema = z.object({
 });
 
 const LoginPage = () => {
-  const { user, login, isLoggingIn } = useContext(AuthContext);
+  const { user, login, loadingLogin } = useContext(AuthContext);
 
   const {
     register,
@@ -134,10 +134,10 @@ const LoginPage = () => {
           <CardFooter className="flex-col gap-4 px-8 pt-6">
             <Button
               type="submit"
-              disabled={isLoggingIn}
+              disabled={loadingLogin}
               className="h-11 w-full bg-[hsl(var(--palette-6))] text-base font-semibold hover:bg-[hsl(var(--palette-7))]"
             >
-              {isLoggingIn ? 'Entrando...' : 'Entrar'}
+              {loadingLogin ? 'Entrando...' : 'Entrar'}
             </Button>
 
             <div className="text-muted-foreground flex items-center text-sm">

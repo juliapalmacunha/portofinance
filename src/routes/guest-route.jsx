@@ -1,20 +1,20 @@
 import { useContext } from 'react';
-import { Navigate } from 'react-router';
+import { Navigate, Outlet } from 'react-router';
 
 import { AuthContext } from '@/context/auth.jsx';
 
-const HomePage = () => {
+const GuestRoute = () => {
   const { user, isInitializing } = useContext(AuthContext);
 
   if (isInitializing) {
     return <p>Carregando...</p>;
   }
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
+  if (user) {
+    return <Navigate to="/" replace />;
   }
 
-  return <h1>Home page</h1>;
+  return <Outlet />;
 };
 
-export default HomePage;
+export default GuestRoute;

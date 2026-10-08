@@ -11,23 +11,32 @@ import HomePage from './pages/Home.jsx';
 import LoginPage from './pages/Login.jsx';
 import NotFoundPage from './pages/NotFound.jsx';
 import SignupPage from './pages/Signup.jsx';
+import GuestRoute from './routes/guest-route.jsx';
+import ProtectedRoute from './routes/protected-route.jsx';
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AuthContextProvider>
-        <BrowserRouter>
+      <BrowserRouter>
+        <AuthContextProvider>
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
+            <Route element={<GuestRoute />}>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+            </Route>
+
+            <Route element={<ProtectedRoute />}>
+              <Route path="/" element={<HomePage />} />
+            </Route>
+
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
-        </BrowserRouter>
-        <Toaster />
-      </AuthContextProvider>
+
+          <Toaster />
+        </AuthContextProvider>
+      </BrowserRouter>
     </QueryClientProvider>
   </StrictMode>
 );

@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-import { Navigate } from 'react-router';
+import { Navigate, Outlet } from 'react-router';
 
 import { AuthContext } from '@/context/auth.jsx';
 
-const HomePage = () => {
+const ProtectedRoute = () => {
   const { user, isInitializing } = useContext(AuthContext);
 
   if (isInitializing) {
@@ -14,7 +14,7 @@ const HomePage = () => {
     return <Navigate to="/login" replace />;
   }
 
-  return <h1>Home page</h1>;
+  return <Outlet />;
 };
 
-export default HomePage;
+export default ProtectedRoute;

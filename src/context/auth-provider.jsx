@@ -6,21 +6,29 @@ import { api } from '@/lib/axios.js';
 
 import { AuthContext } from './auth.jsx';
 
+const LOCAL_STORAGE_ACCESS_TOKEN_KEY = 'access_token';
+const LOCAL_STORAGE_REFRESH_TOKEN_KEY = 'refresh_token';
+
 const saveTokens = (tokens) => {
   const accessToken = tokens?.accessToken;
   const refreshToken = tokens?.refreshToken;
 
   if (accessToken && refreshToken) {
     localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY, accessToken);
+
     localStorage.setItem(LOCAL_STORAGE_REFRESH_TOKEN_KEY, refreshToken);
   }
 };
 
-const LOCAL_STORAGE_ACCESS_TOKEN_KEY = 'access_token';
-const LOCAL_STORAGE_REFRESH_TOKEN_KEY = 'refresh_token';
+const removeTokens = () => {
+  localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
+  localStorage.removeItem(LOCAL_STORAGE_REFRESH_TOKEN_KEY);
+};
 
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+
+  const [isInitializing, setIsInitializing] = useState(true);
 
   const signupMutation = useMutation({
     mutationKey: ['signup'],
@@ -48,6 +56,7 @@ export const AuthContextProvider = ({ children }) => {
         const accessToken = localStorage.getItem(
           LOCAL_STORAGE_ACCESS_TOKEN_KEY
         );
+
         const refreshToken = localStorage.getItem(
           LOCAL_STORAGE_REFRESH_TOKEN_KEY
         );
@@ -65,6 +74,11 @@ export const AuthContextProvider = ({ children }) => {
         setUser(response.data);
       } catch (error) {
         console.error('Erro ao verificar tokens:', error);
+
+        removeTokens();
+        setUser(null);
+      } finally {
+        setIsInitializing(false);
       }
     };
 
@@ -111,8 +125,9 @@ export const AuthContextProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
-        isSigningUp: signupMutation.isPending,
-        isLoggingIn: loginMutation.isPending,
+        isInitializing,
+        loadingSignup: signupMutation.isPending,
+        loadingLogin: loginMutation.isPending,
         login,
         signup,
       }}

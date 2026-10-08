@@ -55,7 +55,7 @@ const signupSchema = z
   });
 
 const SignupPage = () => {
-  const { user, signup, isSigningUp } = useContext(AuthContext);
+  const { user, signup, loadingLogin } = useContext(AuthContext);
 
   const {
     register,
@@ -261,10 +261,10 @@ const SignupPage = () => {
           <CardFooter className="flex-col gap-3 px-8 pt-2">
             <Button
               type="submit"
-              disabled={isSigningUp}
+              disabled={loadingLogin}
               className="h-11 w-full bg-[hsl(var(--palette-6))] text-base font-semibold hover:bg-[hsl(var(--palette-7))]"
             >
-              {isSigningUp ? 'Criando conta...' : 'Criar conta'}
+              {loadingLogin ? 'Entrando...' : 'Entrar'}
             </Button>
 
             <div className="text-muted-foreground flex items-center text-sm">
