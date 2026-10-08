@@ -1,3 +1,4 @@
+import { LoaderCircle } from 'lucide-react';
 import { useContext } from 'react';
 import { Navigate, Outlet } from 'react-router';
 
@@ -7,7 +8,11 @@ const GuestRoute = () => {
   const { user, isInitializing } = useContext(AuthContext);
 
   if (isInitializing) {
-    return <p>Carregando...</p>;
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <LoaderCircle className="size-6 animate-spin" />
+      </div>
+    );
   }
 
   if (user) {
