@@ -11,10 +11,13 @@ const saveTokens = (tokens) => {
   const refreshToken = tokens?.refreshToken;
 
   if (accessToken && refreshToken) {
-    localStorage.setItem('access_token', accessToken);
-    localStorage.setItem('refresh_token', refreshToken);
+    localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY, accessToken);
+    localStorage.setItem(LOCAL_STORAGE_REFRESH_TOKEN_KEY, refreshToken);
   }
 };
+
+const LOCAL_STORAGE_ACCESS_TOKEN_KEY = 'access_token';
+const LOCAL_STORAGE_REFRESH_TOKEN_KEY = 'refresh_token';
 
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -39,12 +42,15 @@ export const AuthContextProvider = ({ children }) => {
     },
   });
 
-  // Mantém o usuário logado ao recarregar a página
   useEffect(() => {
     const init = async () => {
       try {
-        const accessToken = localStorage.getItem('access_token');
-        const refreshToken = localStorage.getItem('refresh_token');
+        const accessToken = localStorage.getItem(
+          LOCAL_STORAGE_ACCESS_TOKEN_KEY
+        );
+        const refreshToken = localStorage.getItem(
+          LOCAL_STORAGE_REFRESH_TOKEN_KEY
+        );
 
         if (!accessToken || !refreshToken) {
           return;
