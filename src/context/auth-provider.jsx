@@ -2,12 +2,13 @@ import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
+import {
+  LOCAL_STORAGE_ACCESS_TOKEN_KEY,
+  LOCAL_STORAGE_REFRESH_TOKEN_KEY,
+} from '@/constants/local-storage.js';
 import { api } from '@/lib/axios.js';
 
 import { AuthContext } from './auth.jsx';
-
-const LOCAL_STORAGE_ACCESS_TOKEN_KEY = 'access_token';
-const LOCAL_STORAGE_REFRESH_TOKEN_KEY = 'refresh_token';
 
 const saveTokens = (tokens) => {
   const accessToken = tokens?.accessToken;
