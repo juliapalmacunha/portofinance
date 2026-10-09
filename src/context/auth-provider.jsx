@@ -121,15 +121,21 @@ export const AuthContextProvider = ({ children }) => {
     });
   };
 
+  const signout = () => {
+    setUser(null);
+    removeTokens();
+  };
+
   return (
     <AuthContext.Provider
       value={{
         user,
-        isInitializing,
         loadingSignup: signupMutation.isPending,
         loadingLogin: loginMutation.isPending,
+        isInitializing,
         login,
         signup,
+        signout,
       }}
     >
       {children}
