@@ -1,19 +1,10 @@
 import { useContext } from 'react';
-import { Navigate } from 'react-router';
 
 import Header from '@/components/layout/header.jsx';
 import { AuthContext } from '@/context/auth.jsx';
 
 const HomePage = () => {
-  const { user, isInitializing } = useContext(AuthContext);
-
-  if (isInitializing) {
-    return <p>Carregando...</p>;
-  }
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  const { user } = useContext(AuthContext);
 
   return (
     <div className="min-h-screen bg-[#140C30] text-white">

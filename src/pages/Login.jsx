@@ -31,7 +31,7 @@ const loginSchema = z.object({
 });
 
 const LoginPage = () => {
-  const { user, login, loadingLogin } = useContext(AuthContext);
+  const { login, loadingLogin } = useContext(AuthContext);
 
   const {
     register,
@@ -51,14 +51,6 @@ const LoginPage = () => {
   const onSubmit = (data) => {
     login(data);
   };
-
-  if (user) {
-    return (
-      <p>
-        Bem-vindo de volta, {user.first_name} {user.last_name}!
-      </p>
-    );
-  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(ellipse_at_top,hsl(var(--palette-3)/0.45),transparent_60%)] px-4 py-10">

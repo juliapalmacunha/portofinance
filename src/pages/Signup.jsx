@@ -55,7 +55,7 @@ const signupSchema = z
   });
 
 const SignupPage = () => {
-  const { user, signup, loadingLogin } = useContext(AuthContext);
+  const { signup, loadingLogin } = useContext(AuthContext);
 
   const {
     register,
@@ -85,15 +85,6 @@ const SignupPage = () => {
 
     signup(data);
   };
-
-  if (user) {
-    return (
-      <p>
-        Bem-vindo, {user.first_name} {user.last_name}! Sua conta foi criada com
-        sucesso.
-      </p>
-    );
-  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(ellipse_at_top,hsl(var(--palette-3)/0.45),transparent_60%)] px-4 py-5">
