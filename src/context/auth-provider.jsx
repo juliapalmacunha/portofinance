@@ -6,7 +6,7 @@ import {
   LOCAL_STORAGE_ACCESS_TOKEN_KEY,
   LOCAL_STORAGE_REFRESH_TOKEN_KEY,
 } from '@/constants/local-storage.js';
-import { api } from '@/lib/axios.js';
+import { protectedApi, publicApi } from '@/lib/axios.js';
 
 import { AuthContext } from './auth.jsx';
 
@@ -35,7 +35,7 @@ export const AuthContextProvider = ({ children }) => {
     mutationKey: ['signup'],
 
     mutationFn: async (data) => {
-      const response = await api.post('/users', data);
+      const response = await publicApi.post('/users', data);
 
       return response.data;
     },
@@ -45,7 +45,7 @@ export const AuthContextProvider = ({ children }) => {
     mutationKey: ['login'],
 
     mutationFn: async (data) => {
-      const response = await api.post('/users/auth/login', data);
+      const response = await publicApi.post('/users/auth/login', data);
 
       return response.data;
     },
@@ -66,7 +66,7 @@ export const AuthContextProvider = ({ children }) => {
           return;
         }
 
-        const response = await api.get('/users/me', {
+        const response = await protectedApi.get('/users/me', {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
