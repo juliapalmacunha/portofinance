@@ -76,7 +76,6 @@ export const AuthContextProvider = ({ children }) => {
       } catch (error) {
         console.error('Erro ao verificar tokens:', error);
 
-        removeTokens();
         setUser(null);
       } finally {
         setIsInitializing(false);
