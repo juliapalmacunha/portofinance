@@ -255,7 +255,7 @@ const SignupPage = () => {
               disabled={loadingLogin}
               className="h-11 w-full bg-[hsl(var(--palette-6))] text-base font-semibold hover:bg-[hsl(var(--palette-7))]"
             >
-              {loadingLogin ? 'Entrando...' : 'Entrar'}
+              {loadingLogin ? 'Criando...' : 'Criar conta'}
             </Button>
 
             <div className="text-muted-foreground flex items-center text-sm">
