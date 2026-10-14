@@ -6,7 +6,7 @@ import {
   LOCAL_STORAGE_ACCESS_TOKEN_KEY,
   LOCAL_STORAGE_REFRESH_TOKEN_KEY,
 } from '@/constants/local-storage.js';
-import { protectedApi, publicApi } from '@/lib/axios.js';
+import { UserService } from '@/services/user.jsx';
 
 import { AuthContext } from './auth.jsx';
 
@@ -16,7 +16,6 @@ const saveTokens = (tokens) => {
 
   if (accessToken && refreshToken) {
     localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY, accessToken);
-
     localStorage.setItem(LOCAL_STORAGE_REFRESH_TOKEN_KEY, refreshToken);
   }
 };
@@ -28,28 +27,27 @@ const removeTokens = () => {
 
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-
   const [isInitializing, setIsInitializing] = useState(true);
 
   const signupMutation = useMutation({
     mutationKey: ['signup'],
-
-    mutationFn: async (data) => {
-      const response = await publicApi.post('/users', data);
-
-      return response.data;
-    },
+    mutationFn: UserService.signup,
   });
 
   const loginMutation = useMutation({
     mutationKey: ['login'],
-
-    mutationFn: async (data) => {
-      const response = await publicApi.post('/users/auth/login', data);
-
-      return response.data;
-    },
+    mutationFn: UserService.login,
   });
+
+  useEffect(() => {
+    const handleLogout = () => setUser(null);
+
+    window.addEventListener('auth:logout', handleLogout);
+
+    return () => {
+      window.removeEventListener('auth:logout', handleLogout);
+    };
+  }, []);
 
   useEffect(() => {
     const init = async () => {
@@ -66,16 +64,11 @@ export const AuthContextProvider = ({ children }) => {
           return;
         }
 
-        const response = await protectedApi.get('/users/me', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const userData = await UserService.getMe();
 
-        setUser(response.data);
+        setUser(userData);
       } catch (error) {
         console.error('Erro ao verificar tokens:', error);
-
         setUser(null);
       } finally {
         setIsInitializing(false);
