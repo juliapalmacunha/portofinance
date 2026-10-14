@@ -6,7 +6,7 @@ import {
   LOCAL_STORAGE_ACCESS_TOKEN_KEY,
   LOCAL_STORAGE_REFRESH_TOKEN_KEY,
 } from '@/constants/local-storage.js';
-import { UserService } from '@/services/user.jsx';
+import { UserService } from '@/services/user.js';
 
 import { AuthContext } from './auth.jsx';
 
@@ -34,6 +34,7 @@ export const AuthContextProvider = ({ children }) => {
     mutationFn: UserService.signup,
   });
 
+  console.log('signupMutation', { user });
   const loginMutation = useMutation({
     mutationKey: ['login'],
     mutationFn: UserService.login,
