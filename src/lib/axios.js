@@ -61,6 +61,7 @@ protectedApi.interceptors.response.use(
         console.log('Erro ao atualizar o token de acesso:', error);
         localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
         localStorage.removeItem(LOCAL_STORAGE_REFRESH_TOKEN_KEY);
+        window.dispatchEvent(new Event('auth:logout'));
       }
     }
 
