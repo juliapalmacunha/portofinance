@@ -1,16 +1,12 @@
-import { startOfMonth } from 'date-fns';
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
 
 import { DateFilter } from '@/components/date-filter.jsx';
 import Header from '@/components/layout/header.jsx';
 import { Button } from '@/components/ui/button.jsx';
+import { useDateRangeParams } from '@/hooks/use-date-range-params.js';
 
 const HomePage = () => {
-  const [dateRange, setDateRange] = useState(() => ({
-    from: startOfMonth(new Date()),
-    to: new Date(),
-  }));
+  const [dateRange, setDateRange] = useDateRangeParams();
 
   return (
     <div className="min-h-screen bg-[#140C30] text-white">
