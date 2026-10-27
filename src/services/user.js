@@ -38,13 +38,14 @@ export const UserService = {
 
   login: async (data) => {
     const response = await publicApi.post('/users/auth/login', data);
+    const { user, tokens } = response.data;
+
     return {
-      id: response.data.id,
-      firstName: response.data.first_name,
-      lastName: response.data.last_name,
-      email: response.data.email,
-      password: response.data.password,
-      tokens: response.data.tokens,
+      id: user.id,
+      firstName: user.first_name,
+      lastName: user.last_name,
+      email: user.email,
+      tokens,
     };
   },
 
