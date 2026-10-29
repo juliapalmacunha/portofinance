@@ -34,7 +34,6 @@ export const AuthContextProvider = ({ children }) => {
     mutationFn: UserService.signup,
   });
 
-  console.log('signupMutation', { user });
   const loginMutation = useMutation({
     mutationKey: ['login'],
     mutationFn: UserService.login,
