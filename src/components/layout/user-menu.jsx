@@ -86,7 +86,7 @@ export const UserMenu = () => {
             </Avatar>
           </div>
 
-          <span className="max-w-40 flex-1 truncate text-sm font-medium text-white/90">
+          <span className="max-w-40 flex-1 truncate text-sm font-medium text-white/90 capitalize">
             {fullName || 'Minha conta'}
           </span>
 
