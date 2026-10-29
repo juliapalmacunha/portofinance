@@ -1,12 +1,16 @@
 import { Plus } from 'lucide-react';
 
+import { Balance } from '@/components/balance.jsx';
 import { DateFilter } from '@/components/date-filter.jsx';
 import Header from '@/components/layout/header.jsx';
 import { Button } from '@/components/ui/button.jsx';
-import { useDateRangeParams } from '@/hooks/use-date-range-params.js';
+import { useUrlDateRange } from '@/hooks/use-url-date-range.js';
+import { useUserBalance } from '@/hooks/use-user-balance.js';
 
 const HomePage = () => {
-  const [dateRange, setDateRange] = useDateRangeParams();
+  const [dateRange, setDateRange] = useUrlDateRange();
+  const { data: balance, isLoading } = useUserBalance(dateRange);
+  console.log('HomePage', { dateRange, balance, isLoading });
 
   return (
     <div className="min-h-screen bg-[#140C30] text-white">
@@ -38,6 +42,8 @@ const HomePage = () => {
               </Button>
             </div>
           </div>
+
+          <Balance data={balance} isLoading={isLoading} />
         </main>
       </div>
     </div>

@@ -15,7 +15,7 @@ const parseDateParam = (value) => {
   return isValid(date) ? date : null;
 };
 
-export const useDateRangeParams = () => {
+export const useUrlDateRange = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const fromParam = searchParams.get('from');
   const toParam = searchParams.get('to');
