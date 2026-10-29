@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -26,6 +26,7 @@ const removeTokens = () => {
 };
 
 export const AuthContextProvider = ({ children }) => {
+  const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
   const [isInitializing, setIsInitializing] = useState(true);
 
@@ -39,15 +40,19 @@ export const AuthContextProvider = ({ children }) => {
     mutationFn: UserService.login,
   });
 
+  // Logout automático: disparado pelo axios quando o refresh token falha
   useEffect(() => {
-    const handleLogout = () => setUser(null);
+    const handleLogout = () => {
+      setUser(null);
+      queryClient.clear();
+    };
 
     window.addEventListener('auth:logout', handleLogout);
 
     return () => {
       window.removeEventListener('auth:logout', handleLogout);
     };
-  }, []);
+  }, [queryClient]);
 
   useEffect(() => {
     const init = async () => {
@@ -114,9 +119,11 @@ export const AuthContextProvider = ({ children }) => {
     });
   };
 
+  // Logout manual: remove usuário, tokens e todo o cache de dados
   const signout = () => {
     setUser(null);
     removeTokens();
+    queryClient.clear();
   };
 
   return (
