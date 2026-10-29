@@ -74,12 +74,6 @@ export const UserService = {
       },
     });
 
-    console.log('UserService.getBalance', {
-      from,
-      to,
-      response: response.data,
-    });
-
     return {
       balance: Number(response.data.balance),
       earnings: Number(response.data.earnings),

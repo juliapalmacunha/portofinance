@@ -4,14 +4,8 @@ import { Balance } from '@/components/balance.jsx';
 import { DateFilter } from '@/components/date-filter.jsx';
 import Header from '@/components/layout/header.jsx';
 import { Button } from '@/components/ui/button.jsx';
-import { useUrlDateRange } from '@/hooks/use-url-date-range.js';
-import { useUserBalance } from '@/hooks/use-user-balance.js';
 
 const HomePage = () => {
-  const [dateRange, setDateRange] = useUrlDateRange();
-  const { data: balance, isLoading } = useUserBalance(dateRange);
-  console.log('HomePage', { dateRange, balance, isLoading });
-
   return (
     <div className="min-h-screen bg-[#140C30] text-white">
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top,#15565B_0%,#14253E_35%,#140C30_75%)] opacity-70" />
@@ -31,7 +25,7 @@ const HomePage = () => {
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-              <DateFilter value={dateRange} onChange={setDateRange} />
+              <DateFilter />
 
               <Button
                 type="button"
@@ -43,7 +37,7 @@ const HomePage = () => {
             </div>
           </div>
 
-          <Balance data={balance} isLoading={isLoading} />
+          <Balance />
         </main>
       </div>
     </div>

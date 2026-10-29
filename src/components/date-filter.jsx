@@ -8,6 +8,7 @@ import {
 import { useState } from 'react';
 
 import { DatePickerWithRange } from '@/components/ui/date-picker-with-range.jsx';
+import { useUrlDateRange } from '@/hooks/use-url-date-range.js';
 
 const getPresets = () => {
   const today = new Date();
@@ -42,11 +43,13 @@ const matchesRange = (first, second) =>
     isSameDay(first.to, second.to)
   );
 
-export const DateFilter = ({ value, onChange }) => {
-  const [draftRange, setDraftRange] = useState(value);
+export const DateFilter = () => {
+  const [dateRange, setDateRange] = useUrlDateRange();
+
+  const [draftRange, setDraftRange] = useState(dateRange);
   const [isOpen, setIsOpen] = useState(false);
   const [displayMonth, setDisplayMonth] = useState(() =>
-    startOfMonth(value.from)
+    startOfMonth(dateRange.from)
   );
 
   const presets = getPresets();
@@ -56,8 +59,8 @@ export const DateFilter = ({ value, onChange }) => {
   )?.label;
 
   const resetDraft = () => {
-    setDraftRange(value);
-    setDisplayMonth(startOfMonth(value.from));
+    setDraftRange(dateRange);
+    setDisplayMonth(startOfMonth(dateRange.from));
   };
 
   const handleOpenChange = (open) => {
@@ -73,7 +76,6 @@ export const DateFilter = ({ value, onChange }) => {
   const handleDateChange = (range, selectedDay) => {
     if (!selectedDay) return;
 
-    // Se o range já está completo, o próximo clique inicia uma nova seleção
     if (draftRange?.from && draftRange?.to) {
       setDraftRange({ from: selectedDay, to: undefined });
       return;
@@ -85,7 +87,7 @@ export const DateFilter = ({ value, onChange }) => {
   const handleApply = () => {
     if (!draftRange?.from || !draftRange?.to) return;
 
-    onChange(draftRange);
+    setDateRange(draftRange);
     setIsOpen(false);
   };
 
@@ -96,7 +98,7 @@ export const DateFilter = ({ value, onChange }) => {
 
   return (
     <DatePickerWithRange
-      value={value}
+      value={dateRange}
       draftRange={draftRange}
       isOpen={isOpen}
       presets={presets}
