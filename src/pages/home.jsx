@@ -1,9 +1,7 @@
-import { Plus } from 'lucide-react';
-
+import { AddTransactionDialog } from '@/components/add-transaction-dialog.jsx';
 import { Balance } from '@/components/balance.jsx';
 import { DateFilter } from '@/components/date-filter.jsx';
 import Header from '@/components/layout/header.jsx';
-import { Button } from '@/components/ui/button.jsx';
 
 const HomePage = () => {
   return (
@@ -26,14 +24,7 @@ const HomePage = () => {
 
             <div className="flex flex-wrap items-center gap-3">
               <DateFilter />
-
-              <Button
-                type="button"
-                className="h-10 gap-2 rounded-lg bg-[#16A085] px-4 text-sm font-medium text-white transition-colors duration-200 hover:bg-[#168777]"
-              >
-                <Plus className="size-4" />
-                Nova transação
-              </Button>
+              <AddTransactionDialog />
             </div>
           </div>
 
