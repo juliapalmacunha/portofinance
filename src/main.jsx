@@ -7,10 +7,10 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 import { Toaster } from 'sonner';
 
 import { AuthContextProvider } from './context/auth-provider.jsx';
-import HomePage from './pages/Home.jsx';
-import LoginPage from './pages/Login.jsx';
-import NotFoundPage from './pages/NotFound.jsx';
-import SignupPage from './pages/Signup.jsx';
+import HomePage from './pages/home.jsx';
+import LoginPage from './pages/login.jsx';
+import NotFoundPage from './pages/not-found.jsx';
+import SignupPage from './pages/signup.jsx';
 import GuestRoute from './routes/guest-route.jsx';
 import ProtectedRoute from './routes/protected-route.jsx';
 
