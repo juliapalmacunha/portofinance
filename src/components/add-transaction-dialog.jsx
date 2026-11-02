@@ -17,6 +17,13 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog.jsx';
 import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field.jsx';
+import { Input } from '@/components/ui/input.jsx';
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -25,21 +32,9 @@ import { useCreateTransaction } from '@/hooks/use-create-transaction.js';
 import { cn } from '@/lib/utils.js';
 
 const TRANSACTION_TYPES = [
-  {
-    value: 'EXPENSE',
-    label: 'Gasto',
-    dotClassName: 'bg-rose-400',
-  },
-  {
-    value: 'EARNING',
-    label: 'Ganho',
-    dotClassName: 'bg-[#2DD4AA]',
-  },
-  {
-    value: 'INVESTMENT',
-    label: 'Investimento',
-    dotClassName: 'bg-sky-400',
-  },
+  { value: 'EXPENSE', label: 'Gasto', dotClassName: 'bg-rose-400' },
+  { value: 'EARNING', label: 'Ganho', dotClassName: 'bg-[#2DD4AA]' },
+  { value: 'INVESTMENT', label: 'Investimento', dotClassName: 'bg-sky-400' },
 ];
 
 // Regras iguais às do backend
@@ -70,13 +65,34 @@ const formatDateLabel = (date) =>
     ? 'Hoje'
     : format(date, "d 'de' MMMM 'de' yyyy", { locale: ptBR });
 
+// Visual compartilhado pelos campos de descrição e data
 const fieldClassName =
-  'h-11 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 text-base text-white placeholder:text-white/40 outline-none transition-colors focus:border-[#16A085]/60 aria-invalid:border-rose-400/60';
+  'h-11 w-full rounded-lg border-white/15 bg-white/[0.04] px-3 text-base text-white placeholder:text-white/40 md:text-base';
 
-const FieldMessage = ({ error }) =>
-  error ? (
-    <p className="mt-1.5 text-sm text-rose-300">{error.message}</p>
-  ) : null;
+const labelClassName = 'text-sm font-normal text-white/70';
+const errorClassName = 'text-rose-300';
+
+// Valor em reais sem o "R$", que já aparece ao lado do campo: 2.300,50
+const amountFormatter = new Intl.NumberFormat('pt-BR', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+// Máscara de centavos (estilo app de banco): cada dígito entra pela direita
+// "2" → 0,02 | "23" → 0,23 | "230050" → 2.300,50
+const MAX_DIGITS = 9; // 7 dígitos inteiros + 2 centavos: até R$ 9.999.999,99
+
+const parseAmountInput = (text) => {
+  const digits = text.replace(/\D/g, '').slice(0, MAX_DIGITS);
+  if (!digits) return undefined;
+  return Number(digits) / 100;
+};
+
+const formatAmountInput = (value) =>
+  value === undefined ? '' : amountFormatter.format(value);
+
+// O campo cresce junto com o número (1 "ch" = largura de um dígito)
+const getAmountInputWidth = (text) => `${Math.max(text.length, 4) + 0.5}ch`;
 
 export const AddTransactionDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -102,22 +118,15 @@ export const AddTransactionDialog = () => {
   };
 
   const onSubmit = (data) => {
-    createTransaction(
-      {
-        ...data,
-        // Garante no máximo 2 casas decimais, como o backend exige
-        amount: Math.round(data.amount * 100) / 100,
+    createTransaction(data, {
+      onSuccess: () => {
+        toast.success('Transação adicionada');
+        handleOpenChange(false);
       },
-      {
-        onSuccess: () => {
-          toast.success('Transação adicionada');
-          handleOpenChange(false);
-        },
-        onError: () => {
-          toast.error('Não foi possível salvar a transação. Tente novamente.');
-        },
-      }
-    );
+      onError: () => {
+        toast.error('Não foi possível salvar a transação. Tente novamente.');
+      },
+    });
   };
 
   return (
@@ -143,85 +152,119 @@ export const AddTransactionDialog = () => {
           </DialogHeader>
 
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            {/* Tipo: controle segmentado */}
-            <Controller
-              name="type"
-              control={control}
-              render={({ field }) => (
-                <div
-                  role="radiogroup"
-                  aria-label="Tipo da transação"
-                  className="grid grid-cols-3 gap-1 rounded-lg border border-white/10 bg-white/[0.02] p-1"
-                >
-                  {TRANSACTION_TYPES.map((type) => {
-                    const isActive = field.value === type.value;
+            <FieldGroup className="gap-5">
+              {/* Tipo: controle segmentado */}
+              <Field>
+                <FieldLabel id="transaction-type-label" className="sr-only">
+                  Tipo
+                </FieldLabel>
 
-                    return (
-                      <button
-                        key={type.value}
-                        type="button"
-                        role="radio"
-                        aria-checked={isActive}
-                        onClick={() => field.onChange(type.value)}
-                        className={cn(
-                          'flex h-9 items-center justify-center gap-1.5 rounded-md text-sm font-medium transition-colors',
-                          isActive
-                            ? 'bg-white/10 text-white'
-                            : 'text-white/60 hover:text-white'
-                        )}
-                      >
-                        <span
-                          className={cn(
-                            'size-2 rounded-full transition-opacity',
-                            type.dotClassName,
-                            !isActive && 'opacity-40'
-                          )}
-                        />
-                        {type.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            />
-            <FieldMessage error={errors.type} />
+                <Controller
+                  name="type"
+                  control={control}
+                  render={({ field }) => (
+                    <div
+                      role="radiogroup"
+                      aria-labelledby="transaction-type-label"
+                      className="grid grid-cols-3 gap-1 rounded-lg border border-white/10 bg-white/[0.02] p-1"
+                    >
+                      {TRANSACTION_TYPES.map((type) => {
+                        const isActive = field.value === type.value;
 
-            {/* Valor: destaque principal */}
-            <div className="my-7 text-center">
-              <label
-                htmlFor="transaction-amount"
-                className="text-xs font-medium tracking-wider text-white/60 uppercase"
-              >
-                Valor
-              </label>
-
-              <div className="mt-2 flex items-baseline justify-center gap-1.5">
-                <span className="text-2xl font-medium text-white/60">R$</span>
-                <input
-                  id="transaction-amount"
-                  type="number"
-                  inputMode="decimal"
-                  step="0.01"
-                  min="1"
-                  placeholder="0,00"
-                  aria-invalid={!!errors.amount}
-                  className="w-56 [appearance:textfield] bg-transparent text-center text-5xl font-medium tracking-tight text-white tabular-nums outline-none placeholder:text-white/25 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                  {...register('amount', { valueAsNumber: true })}
+                        return (
+                          <button
+                            key={type.value}
+                            type="button"
+                            role="radio"
+                            aria-checked={isActive}
+                            onClick={() => field.onChange(type.value)}
+                            className={cn(
+                              'flex h-9 items-center justify-center gap-1.5 rounded-md text-sm font-medium transition-colors',
+                              isActive
+                                ? 'bg-white/10 text-white'
+                                : 'text-white/60 hover:text-white'
+                            )}
+                          >
+                            <span
+                              className={cn(
+                                'size-2 rounded-full transition-opacity',
+                                type.dotClassName,
+                                !isActive && 'opacity-40'
+                              )}
+                            />
+                            {type.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 />
-              </div>
-              <FieldMessage error={errors.amount} />
-            </div>
 
-            <div className="space-y-4">
+                {errors.type && (
+                  <FieldError
+                    className={errorClassName}
+                    errors={[errors.type]}
+                  />
+                )}
+              </Field>
+
+              {/* Valor: destaque principal, formatado em reais */}
+              <Field className="items-center py-2 text-center">
+                <FieldLabel
+                  htmlFor="transaction-amount"
+                  className="text-xs font-medium tracking-wider text-white/60 uppercase"
+                >
+                  Valor
+                </FieldLabel>
+
+                <div className="flex max-w-full items-baseline justify-center gap-1.5">
+                  <span className="text-2xl font-medium text-white/60">R$</span>
+
+                  <Controller
+                    name="amount"
+                    control={control}
+                    render={({ field }) => (
+                      <input
+                        id="transaction-amount"
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete="off"
+                        placeholder="0,00"
+                        value={formatAmountInput(field.value)}
+                        onChange={(event) =>
+                          field.onChange(parseAmountInput(event.target.value))
+                        }
+                        onBlur={field.onBlur}
+                        aria-invalid={!!errors.amount}
+                        style={{
+                          width: getAmountInputWidth(
+                            formatAmountInput(field.value)
+                          ),
+                        }}
+                        className="max-w-full min-w-0 bg-transparent text-center text-4xl font-medium tracking-tight text-white tabular-nums outline-none placeholder:text-white/25 sm:text-5xl"
+                      />
+                    )}
+                  />
+                </div>
+
+                {errors.amount && (
+                  <FieldError
+                    className={errorClassName}
+                    errors={[errors.amount]}
+                  />
+                )}
+              </Field>
+
               {/* Descrição */}
-              <div>
-                <label
+              <Field>
+                <FieldLabel
                   htmlFor="transaction-name"
-                  className="mb-1.5 block text-sm text-white/70"
+                  className={labelClassName}
                 >
                   Descrição
-                </label>
-                <input
+                </FieldLabel>
+
+                <Input
                   id="transaction-name"
                   placeholder="Mercado, salário, CDB..."
                   autoComplete="off"
@@ -229,12 +272,24 @@ export const AddTransactionDialog = () => {
                   className={fieldClassName}
                   {...register('name')}
                 />
-                <FieldMessage error={errors.name} />
-              </div>
+
+                {errors.name && (
+                  <FieldError
+                    className={errorClassName}
+                    errors={[errors.name]}
+                  />
+                )}
+              </Field>
 
               {/* Data: calendário no lugar do seletor nativo */}
-              <div>
-                <span className="mb-1.5 block text-sm text-white/70">Data</span>
+              <Field>
+                <FieldLabel
+                  htmlFor="transaction-date"
+                  className={labelClassName}
+                >
+                  Data
+                </FieldLabel>
+
                 <Controller
                   name="date"
                   control={control}
@@ -246,10 +301,11 @@ export const AddTransactionDialog = () => {
                       <PopoverTrigger
                         render={
                           <button
+                            id="transaction-date"
                             type="button"
                             className={cn(
                               fieldClassName,
-                              'flex items-center justify-between text-left'
+                              'flex items-center justify-between border text-left transition-colors outline-none focus-visible:border-[#16A085]/60'
                             )}
                           />
                         }
@@ -258,6 +314,7 @@ export const AddTransactionDialog = () => {
                           <CalendarDays className="size-4 text-[#16A085]" />
                           {formatDateLabel(field.value)}
                         </span>
+
                         <ChevronDown
                           className={cn(
                             'size-4 text-white/50 transition-transform',
@@ -287,9 +344,15 @@ export const AddTransactionDialog = () => {
                     </Popover>
                   )}
                 />
-                <FieldMessage error={errors.date} />
-              </div>
-            </div>
+
+                {errors.date && (
+                  <FieldError
+                    className={errorClassName}
+                    errors={[errors.date]}
+                  />
+                )}
+              </Field>
+            </FieldGroup>
 
             <div className="mt-7 flex gap-2">
               <Button
@@ -300,6 +363,7 @@ export const AddTransactionDialog = () => {
               >
                 Cancelar
               </Button>
+
               <Button
                 type="submit"
                 disabled={isPending}
